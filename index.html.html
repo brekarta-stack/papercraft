@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STAGE | 움직이는 종이의 창의적 설계</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:#0b1020;
+      color:white;
+      overflow-x:hidden;
+      line-height:1.6;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    section{
+      padding:120px 8vw;
+      position:relative;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size:40px 40px;
+      z-index:-2;
+    }
+
+    .glow{
+      position:fixed;
+      width:700px;
+      height:700px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(0,174,255,0.18), transparent 70%);
+      filter:blur(40px);
+      top:-200px;
+      right:-200px;
+      z-index:-1;
+      animation:float 10s ease-in-out infinite;
+    }
+
+    @keyframes float{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(40px);}
+    }
+
+    nav{
+      position:fixed;
+      width:100%;
+      top:0;
+      left:0;
+      z-index:999;
+      padding:24px 8vw;
+      backdrop-filter: blur(10px);
+      background:rgba(5,10,20,0.5);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-inner{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .logo{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:2px;
+    }
+
+    .menu{
+      display:flex;
+      gap:28px;
+      font-size:14px;
+      opacity:0.8;
+    }
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:80px;
+      padding-top:180px;
+    }
+
+    .hero-left{
+      flex:1;
+    }
+
+    .tag{
+      display:inline-block;
+      padding:8px 14px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:999px;
+      margin-bottom:24px;
+      font-size:13px;
+      letter-spacing:1px;
+    }
+
+    h1{
+      font-size:clamp(48px, 8vw, 96px);
+      line-height:0.95;
+      margin-bottom:28px;
+      font-weight:900;
+    }
+
+    .hero p{
+      max-width:700px;
+      font-size:20px;
+      opacity:0.82;
+      margin-bottom:40px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:16px 28px;
+      border-radius:16px;
+      font-weight:700;
+      transition:0.3s;
+    }
+
+    .btn-primary{
+      background:#00aeff;
+      color:#081018;
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-3px);
+      box-shadow:0 15px 40px rgba(0,174,255,0.35);
+    }
+
+    .btn-secondary{
+      border:1px solid rgba(255,255,255,0.15);
+      background:rgba(255,255,255,0.05);
+    }
+
+    .hero-right{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .paper-scene{
+      width:520px;
+      height:520px;
+      position:relative;
+    }
+
+    .paper{
+      position:absolute;
+      background:linear-gradient(145deg,#ffffff,#dfe7ff);
+      border-radius:12px;
+      box-shadow:
+        0 30px 60px rgba(0,0,0,0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.8);
+    }
+
+    .paper-main{
+      width:280px;
+      height:280px;
+      left:120px;
+      top:120px;
+      transform:rotate(12deg);
+      animation:spin 8s ease-in-out infinite;
+    }
+
+    .paper-wing1{
+      width:160px;
+      height:160px;
+      left:40px;
+      top:180px;
+      transform:rotate(-20deg);
+      animation:wing1 4s ease-in-out infinite;
+    }
+
+    .paper-wing2{
+      width:160px;
+      height:160px;
+      right:20px;
+      top:100px;
+      transform:rotate(25deg);
+      animation:wing2 4s ease-in-out infinite;
+    }
+
+    .paper-circle{
+      position:absolute;
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      background:#00aeff;
+      top:220px;
+      left:220px;
+      box-shadow:0 0 40px rgba(0,174,255,0.6);
+    }
+
+    @keyframes spin{
+      0%,100%{transform:rotate(12deg) translateY(0);}
+      50%{transform:rotate(18deg) translateY(-12px);}
+    }
+
+    @keyframes wing1{
+      0%,100%{transform:rotate(-20deg);}
+      50%{transform:rotate(-30deg);}
+    }
+
+    @keyframes wing2{
+      0%,100%{transform:rotate(25deg);}
+      50%{transform:rotate(35deg);}
+    }
+
+    .section-title{
+      font-size:52px;
+      margin-bottom:20px;
+      font-weight:900;
+    }
+
+    .section-desc{
+      font-size:18px;
+      opacity:0.75;
+      max-width:800px;
+      margin-bottom:70px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:24px;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:28px;
+      padding:36px;
+      transition:0.35s;
+      backdrop-filter: blur(12px);
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+      background:rgba(255,255,255,0.08);
+    }
+
+    .card-icon{
+      width:68px;
+      height:68px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#00aeff,#7a7dff);
+      margin-bottom:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+    }
+
+    .card h3{
+      margin-bottom:16px;
+      font-size:24px;
+    }
+
+    .timeline{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:20px;
+    }
+
+    .step{
+      padding:30px;
+      border-radius:24px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      position:relative;
+    }
+
+    .step-number{
+      font-size:64px;
+      font-weight:900;
+      opacity:0.12;
+      position:absolute;
+      top:10px;
+      right:20px;
+    }
+
+    .footer{
+      padding:80px 8vw;
+      border-top:1px solid rgba(255,255,255,0.08);
+      text-align:center;
+      opacity:0.75;
+    }
+
+    .floating{
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,0.08);
+      animation:floating 7s linear infinite;
+    }
+
+    .f1{
+      width:18px;
+      height:18px;
+      top:10%;
+      left:10%;
+    }
+
+    .f2{
+      width:12px;
+      height:12px;
+      top:70%;
+      left:80%;
+      animation-duration:10s;
+    }
+
+    .f3{
+      width:28px;
+      height:28px;
+      top:50%;
+      left:15%;
+      animation-duration:14s;
+    }
+
+    @keyframes floating{
+      0%{transform:translateY(0);}
+      50%{transform:translateY(-25px);}
+      100%{transform:translateY(0);}
+    }
+
+    @media(max-width:980px){
+
+      .hero{
+        flex-direction:column;
+      }
+
+      .paper-scene{
+        width:340px;
+        height:340px;
+      }
+
+      .paper-main{
+        width:190px;
+        height:190px;
+        left:80px;
+        top:80px;
+      }
+
+      .paper-wing1,
+      .paper-wing2{
+        width:120px;
+        height:120px;
+      }
+
+      .paper-circle{
+        width:60px;
+        height:60px;
+        top:140px;
+        left:140px;
+      }
+
+      .section-title{
+        font-size:38px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="glow"></div>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="logo">STAGE</div>
+
+      <div class="menu">
+        <a href="#about">ABOUT</a>
+        <a href="#service">SERVICE</a>
+        <a href="#process">PROCESS</a>
+        <a href="#contact">CONTACT</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+
+    <div class="hero-left">
+
+      <div class="tag">
+        CREATIVE PAPER ENGINEERING STUDIO
+      </div>
+
+      <h1>
+        움직이는<br/>
+        종이의 설계
+      </h1>
+
+      <p>
+        STAGE는 단순한 종이 모형을 넘어,
+        과학적 구조와 창의적 디자인을 결합해
+        스스로 움직이는 액션 페이퍼 토이를 제작합니다.
+        교육, 브랜드, 전시, 콘텐츠를 위한 새로운 사용자 경험을 설계합니다.
+      </p>
+
+      <div class="buttons">
+        <a class="btn btn-primary" href="#service">서비스 보기</a>
+        <a class="btn btn-secondary" href="#contact">협업 문의</a>
+      </div>
+
+    </div>
+
+    <div class="hero-right">
+
+      <div class="paper-scene">
+
+        <div class="floating f1"></div>
+        <div class="floating f2"></div>
+        <div class="floating f3"></div>
+
+        <div class="paper paper-wing1"></div>
+        <div class="paper paper-wing2"></div>
+        <div class="paper paper-main"></div>
+        <div class="paper-circle"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="about">
+
+    <h2 class="section-title">
+      종이를 넘어<br/>
+      경험을 디자인합니다
+    </h2>
+
+    <p class="section-desc">
+      STAGE는 지기 구조 설계 기술과 특허 기반 메커니즘을 활용하여
+      교육적 가치와 재미를 동시에 전달하는 액션 페이퍼 토이를 개발합니다.
+      공공기관, 기업 브랜드, 교육 콘텐츠까지 다양한 프로젝트를 수행하며
+      디자인과 엔지니어링이 결합된 새로운 인터랙션을 제안합니다.
+    </p>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>구조 설계 기술</h3>
+        <p>
+          탄성력, 무게중심, 움직임 구조를 활용한
+          독창적인 지기 설계 기술을 기반으로 제작합니다.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h3>교육 콘텐츠</h3>
+        <p>
+          초등학생부터 일반 사용자까지
+          직접 만들고 움직이며 학습하는 교육 경험을 제공합니다.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>브랜드 협업</h3>
+        <p>
+          공공기관 및 대기업 맞춤형 캐릭터와
+          브랜드 굿즈를 기획·제작합니다.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h3>원스톱 제작</h3>
+        <p>
+          디자인, 생산, 패키지, 교육자료까지
+          전체 프로세스를 통합 제공합니다.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="service">
+
+    <h2 class="section-title">
+      우리가 만드는 것
+    </h2>
+
+    <p class="section-desc">
+      STAGE는 창의적인 메커니즘과 브랜드 스토리를 결합하여
+      다양한 형태의 움직이는 종이 콘텐츠를 제작합니다.
+    </p>
+
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>액션 페이퍼 토이</h3>
+        <p>
+          스스로 움직이는 구조 기반의
+          인터랙티브 종이 모형 제작
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏢</div>
+        <h3>기업 프로모션</h3>
+        <p>
+          브랜드 캐릭터 및 이벤트용
+          커스텀 굿즈 개발
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>STEAM 교육</h3>
+        <p>
+          과학 원리를 쉽고 재미있게 전달하는
+          체험형 교육 키트
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🎁</div>
+        <h3>기념품 디자인</h3>
+        <p>
+          전시·행사·기관을 위한
+          차별화된 종이 기반 굿즈 제작
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="process">
+
+    <h2 class="section-title">
+      Creative Process
+    </h2>
+
+    <p class="section-desc">
+      아이디어부터 설계, 생산, 교육 콘텐츠까지.
+      STAGE는 완성도 높은 결과물을 위한 체계적인 제작 프로세스를 운영합니다.
+    </p>
+
+    <div class="timeline">
+
+      <div class="step">
+        <div class="step-number">01</div>
+        <h3>기획</h3>
+        <p>
+          브랜드와 목적에 맞는
+          구조와 사용자 경험을 설계합니다.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">02</div>
+        <h3>프로토타입</h3>
+        <p>
+          움직임과 구조 안정성을 테스트하며
+          실제 동작을 구현합니다.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">03</div>
+        <h3>생산</h3>
+        <p>
+          합리적인 비용과 높은 완성도로
+          대량 생산을 진행합니다.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">04</div>
+        <h3>콘텐츠 제공</h3>
+        <p>
+          조립 설명서와 교육 자료까지
+          함께 제공합니다.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="contact">
+
+    <h2 class="section-title">
+      함께 움직이는<br/>
+      아이디어를 만듭니다
+    </h2>
+
+    <p class="section-desc">
+      교육 프로그램, 브랜드 협업, 전시 콘텐츠,
+      기업 프로모션 등 다양한 프로젝트를 함께합니다.
+    </p>
+
+    <div class="buttons">
+      <a class="btn btn-primary" href="mailto:hello@stage.com">
+        프로젝트 문의하기
+      </a>
+    </div>
+
+  </section>
+
+  <footer class="footer">
+    © 2026 STAGE Creative Paper Engineering Studio
+  </footer>
+
+</body>
+</html>
